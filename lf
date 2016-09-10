@@ -1,0 +1,120 @@
+#!/bin/bash
+
+##===========================================================
+## Shell script to search for file in the pwd
+##
+## Last edited: 08/09/16
+## (C) 2016 AkshayJha
+## github.com/axayjha
+
+## Under GNU LGPL v3.0 License.
+## Free to use, modify and distribute! 
+##============================================================
+
+programname="lf"
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+function usage {
+    echo -e "${bold}NAME${normal}
+        lf - script to ${bold}l${normal}ook ${bold}f${normal}or files in the pwd  \n"
+    echo -e "${bold}SYNOPSIS${normal} 
+        lf [-options] file ... \n"    
+    echo "${bold}DESCRIPTION${normal}
+        Uses -f to look for the file(s) in the pwd. It can search for exact 
+        file name or matching file names. If passed without arguments it simply
+        lists the files in directory. If passed without any option it seraches 
+        for exact file name (-e).
+        "
+    echo "${bold}OPTIONS${normal}"   
+    echo "         lf [${bold}-e${normal}] [@file] ...         looks for exact file name"
+    echo "            [${bold}-s${normal}] [@file] ...         looks for similar file names"    
+    echo "            [${bold}-h| --help${normal}]             display help information"
+    echo "            [${bold}-v| --version${normal}]          display version
+    "     
+    echo -e "${bold}COPYRIGHT${normal}
+        Copyright © 2016 Free Software Foundation, Inc. License GPLv3+: 
+        GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+        This is free software: you are free to change and redistribute it. 
+        There is NO WARRANTY, to the extent permitted by law. \n"
+    echo "${bold}AUTHOR${normal}
+        Akshay Jha
+        For bug reporting please see:
+        <http://www.github.com/axayjha>."
+    exit 1
+}
+
+function version {
+  echo "lf version 0.01"
+  echo "Copyright (C) 2016 AkshayJha"
+}
+
+
+
+loc=$(pwd)
+state=1
+similar="false"
+
+
+if [[ "$#" == 0 ]];
+then
+	ls; 
+	echo "<${bold}lf -h${normal} for more usage information>"
+	exit 1;
+fi
+
+case "$1" in 
+  -s) similar="true"; shift;;
+  -e) shift;;
+  -h| --help) usage; exit 1;;
+  -v| --version) version; exit 1;;
+  -*) echo "$programname: invalid option \"$1\"";
+  	  echo "<${bold}lf -h${normal} for more usage information>";
+  	  exit 1 ;;
+  
+  
+esac
+
+if [[ $similar == "true" ]] ;
+	then
+	for par in "$@"
+	do
+		echo "${bold}$par${normal}"
+		files=$(echo *"$par"*)
+
+		for var in $files
+		do
+
+
+			if [[ -f $var ]];
+				then
+				echo "found $var"
+			else
+				state=0
+			fi
+		done
+		if [[ $state == 1 ]];
+			then
+			echo ""		
+		fi
+	done
+
+
+	if [[ $state == 0 ]];
+		then
+		echo nothing similar to $par found
+	fi
+
+else
+	for var in "$@"
+	do
+
+		if [[ -f $var ]];
+			then
+			echo "${bold}found${normal} $var "
+		else
+			echo "$var not found"
+		fi
+
+	done
+fi
