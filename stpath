@@ -1,0 +1,84 @@
+#!/bin/bash
+dir=$(pwd)
+programname="stpath"
+bold=$(tput bold)
+normal=$(tput sgr0)
+del="false"
+
+function usage {
+    echo -e "${bold}NAME${normal}
+        stpath - script to ${bold}s${normal}end (add) or delete any file ${bold}t${normal}o or from the PATH \n"
+    echo -e "${bold}SYNOPSIS${normal} 
+        stpath [-options] file ... \n"    
+    echo "${bold}DESCRIPTION${normal}
+        stpath simply copies the provided shell script/excutable to ~/bin folder 
+        which is added to PATH variable if it isn't added already.
+        "
+    echo "${bold}OPTIONS${normal}"      
+    echo "     stpath [@file] ...              adds the script to the PATH"
+    echo "            [${bold}-r${normal}] [@file] ...         removes the script from the PATH"
+    echo "            [${bold}-h| --help${normal}]             display help information"
+    echo "            [${bold}-v| --version${normal}]          display version
+    "     
+    echo -e "${bold}COPYRIGHT${normal}
+        Copyright © 2016 Free Software Foundation, Inc. License GPLv3+: 
+        GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+        This is free software: you are free to change and redistribute it. 
+        There is NO WARRANTY, to the extent permitted by law. \n"
+    echo "${bold}AUTHOR${normal}
+        Akshay Jha
+        For bug reporting please see:
+        <http://www.github.com/axayjha>."
+    exit 1
+}
+
+function version {
+  echo "stpath version 0.01"
+  echo "Copyright (C) 2016 AkshayJha"
+}
+
+case "$1" in
+	-r) del="true"; shift;;
+	-v| --version) version; exit 1;;
+	-h| --help) usage; exit 1;;
+	-*) echo "$programname: invalid option. -h for help." ; exit 1;;
+esac
+
+
+if [[ $# == 0 ]];
+then
+	echo "$programname: please enter a file name. -h for help."
+	exit 1
+fi
+
+if !  [[ -d ~/bin ]];
+	then
+		mkdir ~/bin
+fi
+
+
+for var in $@
+do
+	if [[ $del == "true" ]];
+		then
+		if [[ -f $var ]];
+			then
+			rm -f ~/bin/$var
+		fi
+	else	
+		if [[ "$dir" != "/home/akshay/bin" ]];
+		then
+			if [[ -f $var ]];
+				then
+				cp $var ~/bin
+			else
+				echo "$programname: file $var not found"
+			fi
+		fi
+	fi
+done
+
+chmod 777 ~/bin/*
+
+echo "$PATH"|grep -q ~/bin && \
+echo "done"; exit 1  || export PATH=~/bin:"${PATH}"; echo "done"
