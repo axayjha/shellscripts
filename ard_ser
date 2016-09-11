@@ -1,0 +1,6 @@
+#!/bin/bash
+# Arduino "permission denied" fix for linux distros
+# Shell script to change permissions on serial port
+
+sudo usermod -a -G dialout $USER
+sudo chmod a+rw /dev/ttyACM0
