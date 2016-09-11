@@ -1,0 +1,26 @@
+#!/bin/bash
+
+## Shell script to convert C code to asm code
+
+## Author - Akshay Jha 
+## github.com/axayjha
+
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+echo "converting files to assembly code..."
+for var in $@
+do
+	if [[ -f $var ]];
+		then
+		if [[ $var == *.c ]];
+			then
+			gcc $var -S -o "${var//.c}".s
+			echo "${bold}${var//.c}.s created.${normal}"
+		else
+			echo "ctos: $var not a C source."
+		fi
+	else
+		echo "$var not found."
+	fi
+done
