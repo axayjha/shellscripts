@@ -8,6 +8,13 @@
 bold=$(tput bold)
 normal=$(tput sgr0)
 
+
+if [[ $# == 0 ]];
+	then
+	echo "ctos: no file provided."
+	exit 1;
+fi
+
 echo "converting files to assembly code..."
 for var in $@
 do
