@@ -1,0 +1,3 @@
+#!/bin/bash
+#little script to clear screen
+for (( i = 0; i < 30; i++ )); do echo ""; done;
