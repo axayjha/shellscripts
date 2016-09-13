@@ -4,6 +4,7 @@ programname="stpath"
 bold=$(tput bold)
 normal=$(tput sgr0)
 del="false"
+found="no"
 
 function usage {
     echo -e "${bold}NAME${normal}
@@ -51,6 +52,7 @@ then
 	exit 1
 fi
 
+
 if !  [[ -d ~/bin ]];
 	then
 		mkdir ~/bin
@@ -59,6 +61,12 @@ fi
 
 for var in $@
 do
+	if ! [[ -f $var ]]
+		then
+		echo "$programname: file $var not found"
+		continue
+	fi
+
 	if [[ $del == "true" ]];
 		then
 		if [[ -f $var ]];
@@ -66,19 +74,22 @@ do
 			rm -f ~/bin/$var
 		fi
 	else	
+		echo "adding $var to PATH"
 		if [[ "$dir" != "/home/akshay/bin" ]];
 		then
-			if [[ -f $var ]];
-				then
-				cp $var ~/bin
-			else
-				echo "$programname: file $var not found"
-			fi
+
+			cp $var ~/bin
+			found="yes"
 		fi
 	fi
+
+	
 done
 
 chmod 777 ~/bin/*
+if [[ $found == "yes" ]];
+	then
+	echo "$PATH"|grep -q ~/bin && \
+	echo "done"; exit 1  || export PATH=~/bin:"${PATH}"; echo "done"
+fi
 
-echo "$PATH"|grep -q ~/bin && \
-echo "done"; exit 1  || export PATH=~/bin:"${PATH}"; echo "done"
